@@ -101,6 +101,8 @@ public:
     Status topSort(std::vector<std::string>* sortedNames) const;
 
 private:
+	 // 有向图的数据
+	 // 初始化函数和什么？
     struct NodeData {
         InitializerFunction fn;
         unordered_set<std::string> prerequisites;

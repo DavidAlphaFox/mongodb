@@ -69,7 +69,7 @@ Status runGlobalInitializers(const InitializerContext::ArgumentVector& args,
                              const InitializerContext::EnvironmentMap& env) {
     return getGlobalInitializer().execute(args, env);
 }
-
+// mongoSMain直接到这个函数中，进行全局初始化
 Status runGlobalInitializers(int argc, const char* const* argv, const char* const* envp) {
     InitializerContext::ArgumentVector args(argc);
     std::copy(argv, argv + argc, args.begin());

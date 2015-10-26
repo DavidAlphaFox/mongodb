@@ -30,7 +30,8 @@
 #include "mongo/base/initializer.h"
 
 namespace mongo {
-
+// 启动的时候是单线程的状态，所以这样初始化Initializer是没有任何问题的
+	 
 Initializer& getGlobalInitializer() {
     static Initializer theGlobalInitializer;
     return theGlobalInitializer;

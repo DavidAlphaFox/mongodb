@@ -54,7 +54,8 @@ namespace mongo {
 using std::endl;
 using std::string;
 using std::stringstream;
-
+// Fsync是后台任务？
+   
 class FSyncLockThread : public BackgroundJob {
     void doRealWork();
 
@@ -175,10 +176,10 @@ public:
 } fsyncCmd;
 
 SimpleMutex filesLockedFsync("filesLockedFsync");
-
+// 先上scoped的锁，不言而喻，到函数结尾了就自动放开锁
 void FSyncLockThread::doRealWork() {
     SimpleMutex::scoped_lock lkf(filesLockedFsync);
-
+// 范围事务是什么意思
     OperationContextImpl txn;
     ScopedTransaction transaction(&txn, MODE_X);
     Lock::GlobalWrite global(txn.lockState());  // No WriteUnitOfWork needed
@@ -197,7 +198,7 @@ void FSyncLockThread::doRealWork() {
     }
 
     txn.lockState()->downgradeGlobalXtoSForMMAPV1();
-
+// 得到全局存储引擎
     try {
         StorageEngine* storageEngine = getGlobalEnvironment()->getGlobalStorageEngine();
         storageEngine->flushAllFiles(true);

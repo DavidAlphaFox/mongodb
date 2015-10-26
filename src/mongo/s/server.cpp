@@ -412,7 +412,7 @@ MONGO_INITIALIZER_GENERAL(setSSLManagerType,
     return Status::OK();
 }
 #endif
-
+// 初始化MongoDB
 int mongoSMain(int argc, char* argv[], char** envp) {
     static StaticObserver staticObserver;
     if (argc < 1)
@@ -421,7 +421,7 @@ int mongoSMain(int argc, char* argv[], char** envp) {
     setupSignalHandlers(false);
 
     mongosCommand = argv[0];
-
+// 全局性初始化
     Status status = mongo::runGlobalInitializers(argc, argv, envp);
     if (!status.isOK()) {
         severe(LogComponent::kDefault) << "Failed global initialization: " << status;
@@ -450,7 +450,7 @@ int mongoSMain(int argc, char* argv[], char** envp) {
     }
     return 20;
 }
-
+// 启动函数，直接去了mongoSMain
 #if defined(_WIN32)
 // In Windows, wmain() is an alternate entry point for main(), and receives the same parameters
 // as main() but encoded in Windows Unicode (UTF-16); "wide" 16-bit wchar_t characters.  The

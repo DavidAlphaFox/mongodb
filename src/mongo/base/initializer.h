@@ -70,6 +70,8 @@ public:
                    const InitializerContext::EnvironmentMap& env) const;
 
 private:
+	// 初始化的依赖图计算
+	// riak和rabbitMQ也使用了类似的技术
     InitializerDependencyGraph _graph;
 };
 
