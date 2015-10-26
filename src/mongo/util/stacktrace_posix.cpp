@@ -100,7 +100,9 @@ void printStackTrace(std::ostream& os) {
     ////////////////////////////////////////////////////////////
     // Get the backtrace addresses.
     ////////////////////////////////////////////////////////////
-
+//使用backtrace函数获得调用堆栈，并打印到流中
+//便于以后查错使用，以后写C/C++的程序可以考虑使用这个方式
+	
     const int addressCount = backtrace(addresses, maxBackTraceFrames);
     if (addressCount == 0) {
         const int err = errno;

@@ -230,7 +230,7 @@ void myPureCallHandler() {
 }
 
 #else
-
+// 内存异常的处理函数
 void abruptQuitWithAddrSignal(int signalNum, siginfo_t* siginfo, void*) {
     boost::mutex::scoped_lock lk(streamMutex);
 
@@ -265,7 +265,8 @@ void setupSynchronousSignalHandlers() {
     invariant(signal(SIGHUP, SIG_IGN) != SIG_ERR);
     invariant(signal(SIGUSR2, SIG_IGN) != SIG_ERR);
     invariant(signal(SIGPIPE, SIG_IGN) != SIG_ERR);
-
+// 处理段异常，总线异常
+// 除以0等异常
     struct sigaction addrSignals;
     memset(&addrSignals, 0, sizeof(struct sigaction));
     addrSignals.sa_sigaction = abruptQuitWithAddrSignal;

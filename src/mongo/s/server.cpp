@@ -327,9 +327,10 @@ static void startupConfigActions(const std::vector<std::string>& argv) {
 }
 
 static int _main() {
+	 //  如果服务器的全局状态没有初始化成功，直接就退出了 
     if (!initializeServerGlobalState())
         return EXIT_FAILURE;
-
+    // 开启信号处理专用线程
     startSignalProcessingThread();
 
     // we either have a setting where all processes are in localhost or none are
@@ -417,7 +418,7 @@ int mongoSMain(int argc, char* argv[], char** envp) {
     static StaticObserver staticObserver;
     if (argc < 1)
         return EXIT_FAILURE;
-
+	//设置信号集
     setupSignalHandlers(false);
 
     mongosCommand = argv[0];
@@ -430,9 +431,9 @@ int mongoSMain(int argc, char* argv[], char** envp) {
 
     startupConfigActions(std::vector<std::string>(argv, argv + argc));
     cmdline_utils::censorArgvArray(argc, argv);
-
+// 做异常日志
     mongo::logCommonStartupWarnings();
-
+// 启动数据库
     try {
         int exitCode = _main();
         return exitCode;

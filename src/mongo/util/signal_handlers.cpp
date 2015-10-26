@@ -167,6 +167,9 @@ void signalProcessingThread() {
 
     while (true) {
         int actualSignal = 0;
+		// 等待信号的触发
+		// 当其它线程都阻塞某个进程级别的信号的时候，只要有一个线程是不阻塞的
+		// 立刻向该线程交付该信号
         int status = sigwait(&asyncSignals, &actualSignal);
         fassert(16781, status == 0);
         switch (actualSignal) {
@@ -214,6 +217,8 @@ void startSignalProcessingThread() {
     boost::thread(eventProcessingThread).detach();
 #else
     // Mask signals in the current (only) thread. All new threads will inherit this mask.
+	// 主线程设置屏蔽的信号，以后所有的子线程默认继承该状态
+	// 替换掉原来的信号集
     invariant(pthread_sigmask(SIG_SETMASK, &asyncSignals, 0) == 0);
     // Spawn a thread to capture the signals we just masked off.
     boost::thread(signalProcessingThread).detach();

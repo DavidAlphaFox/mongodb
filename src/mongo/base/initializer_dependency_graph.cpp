@@ -68,7 +68,7 @@ InitializerFunction InitializerDependencyGraph::getInitializerFunction(
         return InitializerFunction();
     return iter->second.fn;
 }
-
+//深度优先的遍历算法
 Status InitializerDependencyGraph::topSort(std::vector<std::string>* sortedNames) const {
     /*
      * This top-sort is implemented by performing a depth-first traversal of the dependency
