@@ -60,7 +60,7 @@ public:
      */
     virtual void disconnected(AbstractMessagingPort* p) = 0;
 };
-
+// 一个虚基类
 class MessageServer {
 public:
     struct Options {

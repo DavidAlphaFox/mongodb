@@ -467,7 +467,7 @@ static void _initAndListen(int listenPort) {
     MessageServer::Options options;
     options.port = listenPort;
     options.ipList = serverGlobalParams.bind_ip;
-
+	// 创建服务,使用MyMessageHandler来作为处理类
     MessageServer* server = createServer(options, new MyMessageHandler());
     server->setAsTimeTracker();
 
@@ -660,7 +660,7 @@ static void _initAndListen(int listenPort) {
     // MessageServer::run will return when exit code closes its socket
     server->run();
 }
-
+// 开启初始化和监听
 ExitCode initAndListen(int listenPort) {
     try {
         _initAndListen(listenPort);
@@ -859,7 +859,7 @@ static int mongoDbMain(int argc, char* argv[], char** envp) {
 #if defined(_WIN32)
     mongo::reportEventToSystem = &mongo::reportEventToSystemImpl;
 #endif
-
+	// 同样，设置信号处理的handler
     setupSignalHandlers(false);
 
     // Mongod shouldn't lazily kill cursors. It doesn't mix well with connection pooling.
@@ -868,7 +868,7 @@ static int mongoDbMain(int argc, char* argv[], char** envp) {
     dbExecCommand = argv[0];
 
     srand(curTimeMicros());
-
+// 检测大端CPU，因为MongoDB目前不支持大端CPU
     {
         unsigned x = 0x12345678;
         unsigned char& b = (unsigned char&)x;

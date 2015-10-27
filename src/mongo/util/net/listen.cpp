@@ -263,7 +263,9 @@ void Listener::initAndListen() {
         for (vector<SOCKET>::iterator it = _socks.begin(), end = _socks.end(); it != end; ++it) {
             FD_SET(*it, fds);
         }
-
+// 只用select来监听accept，其实这是个好策略
+// 在socket数量在一定量以下的时候select的效率是比epoll/kqueue高的
+// 以后只需要找出这个阀值就可以了
         maxSelectTime.tv_sec = 0;
         maxSelectTime.tv_usec = 10000;
         const int ret = select(maxfd + 1, fds, NULL, NULL, &maxSelectTime);

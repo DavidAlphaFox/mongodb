@@ -139,7 +139,7 @@ public:
     virtual void connected(AbstractMessagingPort* p) {
         ClientInfo::create(p);
     }
-
+// 处理请求
     virtual void process(Message& m, AbstractMessagingPort* p, LastError* le) {
         verify(p);
         Request r(m, p);
@@ -185,7 +185,7 @@ public:
         // all things are thread local
     }
 };
-
+// 启动服务器了
 void start(const MessageServer::Options& opts) {
     balancer.go();
     cursorCache.startTimeoutThread();
@@ -209,20 +209,22 @@ DBClientBase* createDirectClient(OperationContext* txn) {
 }  // namespace mongo
 
 using namespace mongo;
+// 开始执行MongoDB
 
 static ExitCode runMongosServer(bool doUpgrade) {
     setThreadName("mongosMain");
     printShardingVersionInfo(false);
 
     // set some global state
-
+	// 添加分片的hook，MongoDB的分片的原理是什么？
+	// 此处需要先确认MongoDB分片的原理和机制
     // Add sharding hooks to both connection pools - ShardingConnectionHook includes auth hooks
     pool.addHook(new ShardingConnectionHook(false));
     shardConnectionPool.addHook(new ShardingConnectionHook(true));
-
+    // 这个延迟kill是什么？
     // Mongos shouldn't lazily kill cursors, otherwise we can end up with extras from migration
     DBClientConnection::setLazyKillCursor(false);
-
+	// 复制监控，监控配置的变化
     ReplicaSetMonitor::setConfigChangeHook(stdx::bind(&ConfigServer::replicaSetChange,
                                                       &configServer,
                                                       stdx::placeholders::_1,
@@ -279,7 +281,8 @@ static ExitCode runMongosServer(bool doUpgrade) {
 #if !defined(_WIN32)
     mongo::signalForkSuccess();
 #endif
-
+// 开启web服务线程
+// boost的thread用的挺多的
     if (serverGlobalParams.isHttpInterfaceEnabled) {
         boost::shared_ptr<DbWebServer> dbWebServer(new DbWebServer(
             serverGlobalParams.bind_ip, serverGlobalParams.port + 1000, new NoAdminAccess()));

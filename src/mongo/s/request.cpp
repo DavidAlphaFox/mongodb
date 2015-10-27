@@ -91,9 +91,10 @@ void Request::reset() {
 
 void Request::process(int attempt) {
     init();
+	// 得到Message的操作是什么
     int op = _m.operation();
     verify(op > dbMsg);
-
+	// 得到消息ID
     int msgId = (int)(_m.header().getId());
 
     Timer t;

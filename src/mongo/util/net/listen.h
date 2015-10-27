@@ -46,7 +46,7 @@ namespace mongo {
 const int DEFAULT_MAX_CONN = 1000000;
 
 class MessagingPort;
-
+// 继承于boost的工具基类，不准许一个类进行复制构造
 class Listener : boost::noncopyable {
 public:
     Listener(const std::string& name, const std::string& ip, int port, bool logConnect = true);

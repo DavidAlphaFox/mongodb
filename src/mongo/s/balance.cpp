@@ -70,7 +70,7 @@ using std::string;
 using std::vector;
 
 MONGO_FP_DECLARE(skipBalanceRound);
-
+// 全局静态的balancer
 Balancer balancer;
 
 Balancer::Balancer() : _balancedLastTime(0), _policy(new BalancerPolicy()) {}
@@ -534,11 +534,13 @@ bool Balancer::_init() {
         return false;
     }
 }
-
+// balancer是background的job
 void Balancer::run() {
     // this is the body of a BackgroundJob so if we throw here we're basically ending the balancer
     // thread prematurely
+	// 检查是否停机
     while (!inShutdown()) {
+		 // 检查是否初始化
         if (!_init()) {
             log() << "will retry to initialize balancer in one minute" << endl;
             sleepsecs(60);
@@ -553,8 +555,9 @@ void Balancer::run() {
     // getConnectioString and dist lock constructor does not throw, which is what we expect on while
     // on the balancer thread
     ConnectionString config = configServer.getConnectionString();
+	// 分布式锁，不知道要锁定什么
     DistributedLock balanceLock(config, "balancer");
-
+	// 循环检查shutdown
     while (!inShutdown()) {
         Timer balanceRoundTimer;
         ActionLogType actionLog;

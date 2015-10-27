@@ -90,7 +90,7 @@ private:
 };
 
 }  // namespace
-
+//从MessageServer和Listener上继承下来
 class PortMessageServer : public MessageServer, public Listener {
 public:
     /**
@@ -107,7 +107,7 @@ public:
         ScopeGuard sleepAfterClosingPort = MakeGuard(sleepmillis, 2);
         std::auto_ptr<MessagingPortWithHandler> portWithHandler(
             new MessagingPortWithHandler(psocket, _handler, connectionId));
-
+// 进行全局兴致的流控
         if (!Listener::globalTicketHolder.tryAcquire()) {
             log() << "connection refused because too many open connections: "
                   << Listener::globalTicketHolder.used() << endl;
@@ -139,7 +139,12 @@ public:
                           << "KB. We suggest 1MB" << endl;
             }
 
-
+// 为每个链接创建一个线程，绝大部分数据库都采用这个策略
+// 1、异步操作已经比较不符合人的正常认知，如果再考虑到数据库的事务锁＋MVCC等，Socket per Thread 是简单且实用的模型
+// 2、数据库很多时候是高CPU的操作
+// 针对IO复用这种情况，一般都是高IO的操作
+// 对于数据库QPS过万的情况，我猜测是，单个线程的工作就是解析＋缓存命中，并没有走索引和磁盘扫描这个阶段
+			
             pthread_t thread;
             int failed = pthread_create(&thread, &attrs, &handleIncomingMsg, portWithHandler.get());
 
@@ -264,7 +269,7 @@ private:
     }
 };
 
-
+// 创建一个新的PortMessageServer
 MessageServer* createServer(const MessageServer::Options& opts, MessageHandler* handler) {
     return new PortMessageServer(opts, handler);
 }
